@@ -3,14 +3,15 @@ extern crate num;
 use num_traits::identities::{One, Zero};
 use std::ops::{Sub, BitAnd};
 
-/* 
-
+/*
+From this paper: http://web.mit.edu/cesium/Public/terrain.pdf
 Slope map:
-S[i][j] = max(|h[i][j] − h[i - 1][j]|,
-			  |h[i][j] − h[i + 1][j]|,
-			  |h[i][j] − h[i][j - 1]|,
-			  |h[i][j] − h[i][j + 1]|) 
-
+S[i][j] = max(
+	|h[i][j] − h[i - 1][j]|,
+	|h[i][j] − h[i + 1][j]|,
+	|h[i][j] − h[i][j - 1]|,
+	|h[i][j] − h[i][j + 1]|
+) 
 */
 
 pub struct HeightMap {
