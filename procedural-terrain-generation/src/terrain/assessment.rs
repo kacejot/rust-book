@@ -1,8 +1,7 @@
-extern crate num_traits;
 extern crate num;
 
-use num_traits::identities::{One, Zero};
-use std::ops::{Sub, BitAnd};
+use std::ops::BitAnd;
+use num::Num;
 
 /*
 From this paper: http://web.mit.edu/cesium/Public/terrain.pdf
@@ -59,6 +58,6 @@ pub fn build_slope_map(heigth_map: &HeightMap) {
 }
 
 fn is_power_of_two<T>(number: T) -> bool 
-where T: Sub<Output = T> + BitAnd<Output = T> + One + Zero + PartialEq + Copy {
+where T: Num + Copy + BitAnd<Output = T> {
 	return (number & (number - T::one())) == T::zero()
 }
