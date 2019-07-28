@@ -1,3 +1,4 @@
+extern crate num_traits;
 extern crate num;
 
 use num_traits::identities::{One, Zero};
