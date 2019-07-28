@@ -2,7 +2,6 @@ extern crate num;
 
 use num_traits::identities::{One, Zero};
 use std::ops::{Sub, BitAnd};
-use std::cmp;
 
 /* 
 
@@ -20,7 +19,6 @@ pub struct HeightMap {
 }
 
 impl HeightMap {
-
 	pub fn with_side_size(side_size: usize) -> Result<Self, String> {
 		if !is_power_of_two(side_size) {
 			return Err(format!("side size must be power of two, current is {}", side_size));
@@ -40,17 +38,20 @@ impl HeightMap {
 	}
 }
 
-pub fn build_slope_map(heigth_map: &HeightMap, side_size: usize) {
-	let mut slope_map = HeightMap::with_side_size(side_size).unwrap();
-	for i in 0..side_size {
-		for j in 0..side_size {
-			// TODO: can't calculate max for floats (Ord trait must be implemented)
-			*slope_map.at_mut(i, j) = [
+pub fn build_slope_map(heigth_map: &HeightMap) {
+	let mut slope_map = HeightMap::with_side_size(heigth_map.side_size).unwrap();
+	for i in 0..heigth_map.side_size {
+		for j in 0..heigth_map.side_size {
+			let slopes =[
 				num::abs(heigth_map.at(i, j) - heigth_map.at(i - 1, j)),
 				num::abs(heigth_map.at(i, j) - heigth_map.at(i + 1, j)),
 				num::abs(heigth_map.at(i, j) - heigth_map.at(i, j - 1)),
 				num::abs(heigth_map.at(i, j) - heigth_map.at(i, j + 1)),
-			].iter().max().unwrap();
+			];
+			let max_slope = slopes.iter()
+				.max_by(|a, b| a.partial_cmp(b).unwrap())
+					.unwrap();
+			*slope_map.at_mut(i, j) = *max_slope;
 		}
 	}
 }
