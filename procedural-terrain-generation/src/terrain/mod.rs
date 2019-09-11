@@ -1,1 +1,1 @@
-pub mod assessment;
+pub mod score;
