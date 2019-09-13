@@ -13,6 +13,18 @@ impl HeightMap {
 		}
     }
 
+    pub fn from_buffer(buffer: &[f32]) -> Option<Self> {
+        let edge = (buffer.len() as f32).sqrt() as usize;
+
+        if !edge.is_power_of_two() {
+            return None;
+        }
+
+        let mut result = Self::with_edge_size(edge);
+        result.buffer = buffer.to_vec();
+        Some(result)
+    }
+
     pub fn at(&self, x: usize, y: usize) -> f32 {
 		self.buffer[self.edge_size * y + x]
 	}
@@ -29,6 +41,10 @@ impl HeightMap {
 
     pub fn edge_size(&self) -> usize {
         self.edge_size
+    }
+
+    pub fn buffer(&self) -> &[f32] {
+        &self.buffer
     }
 }
 
