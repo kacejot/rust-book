@@ -3,6 +3,11 @@ pub struct HeightMap {
     edge_size: usize
 }
 
+pub enum Neighbourhood {
+    Moore,
+    VonNeumann
+}
+
 impl HeightMap {
     pub fn with_edge_size(edge_size: usize) -> Self {
         let edge_size = edge_size.next_power_of_two();
@@ -45,6 +50,28 @@ impl HeightMap {
 
     pub fn buffer(&self) -> &[f32] {
         &self.buffer
+    }
+
+    pub fn get_neighbours(&self, i: usize, j: usize, neighbourhood: Neighbourhood) -> Vec<f32> {
+        let i = i as isize;
+        let j = j as isize;
+        match neighbourhood {
+            Neighbourhood::VonNeumann => vec![
+                self.wrapping_at(i - 1, j),
+                self.wrapping_at(i + 1, j),
+                self.wrapping_at(i, j - 1),
+                self.wrapping_at(i, j + 1)],
+            Neighbourhood::Moore => vec![
+                self.wrapping_at(i - 1, j),
+                self.wrapping_at(i + 1, j),
+                self.wrapping_at(i, j - 1),
+                self.wrapping_at(i, j + 1),
+                self.wrapping_at(i - 1, j - 1),
+                self.wrapping_at(i + 1, j - 1),
+                self.wrapping_at(i - 1, j + 1),
+                self.wrapping_at(i + 1, j + 1)
+            ]
+        }
     }
 }
 

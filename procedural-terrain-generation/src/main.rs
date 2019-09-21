@@ -12,6 +12,8 @@ static BUFFER: [f32; 16] = [
 fn main() {
 	let height_map = HeightMap::with_edge_size(511);
 	let slope_map = build_slope_map(&height_map);
-	let _m = calculate_mean_value(&slope_map);
-	let _h = HeightMap::from_buffer(&BUFFER);
+	calculate_mean_value(&slope_map);
+    calculate_standard_deviation(&slope_map);
+	let h = HeightMap::from_buffer(&BUFFER).unwrap();
+    println!("{}", calculate_erosion_score(&h)); 
 }
