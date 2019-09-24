@@ -1,3 +1,4 @@
+#[derive(Debug, Clone)]
 pub struct HeightMap {
     buffer: Vec<f32>,
     edge_size: usize
@@ -18,31 +19,25 @@ impl HeightMap {
 		}
     }
 
-    pub fn from_buffer(buffer: &[f32]) -> Option<Self> {
-        let edge = (buffer.len() as f32).sqrt() as usize;
-
-        if !edge.is_power_of_two() {
-            return None;
-        }
-
-        let mut result = Self::with_edge_size(edge);
-        result.buffer = buffer.to_vec();
-        Some(result)
-    }
-
     pub fn at(&self, x: usize, y: usize) -> f32 {
 		self.buffer[self.edge_size * y + x]
 	}
 
+	pub fn at_mut(&mut self, x: usize, y: usize) -> &mut f32 {
+		&mut self.buffer[self.edge_size * y + x]
+	}
+    
     pub fn wrapping_at(&self, x: isize, y: isize) -> f32 {
         let x = wrap(x, self.edge_size);
         let y = wrap(y, self.edge_size);
         self.at(x, y)
     }
 
-	pub fn at_mut(&mut self, x: usize, y: usize) -> &mut f32 {
-		&mut self.buffer[self.edge_size * y + x]
-	}
+    pub fn wrapping_at_mut(&mut self, x: isize, y: isize) -> &mut f32 {
+        let x = wrap(x, self.edge_size);
+        let y = wrap(y, self.edge_size);
+        self.at_mut(x, y)
+    }
 
     pub fn edge_size(&self) -> usize {
         self.edge_size
@@ -72,6 +67,29 @@ impl HeightMap {
                 self.wrapping_at(i + 1, j + 1)
             ]
         }
+    }
+
+    pub fn normalize(&mut self) {
+        let max = *self.buffer.iter()
+            .max_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal))
+            .unwrap();
+
+        let min = *self.buffer.iter()
+            .min_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal))
+            .unwrap();
+
+        let gap = max - min;
+        for height in &mut self.buffer {
+            *height = (max - *height) / gap;
+        }
+    }
+
+    pub fn to_byte(&self) -> Vec<u8> {
+        let mut height_map = self.clone();
+        height_map.normalize();
+        height_map.buffer().iter()
+            .map(|value| (value * u8::max_value() as f32) as u8)
+            .collect()
     }
 }
 

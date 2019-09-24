@@ -1,19 +1,16 @@
 mod terrain;
 use terrain::height_map::HeightMap;
 use terrain::score::*;
-
-static BUFFER: [f32; 16] = [
-	01f32, 02f32, 03f32, 04f32,
-	05f32, 06f32, 07f32, 08f32,
-	09f32, 10f32, 11f32, 12f32,
-	13f32, 14f32, 15f32, 16f32
-];
+use terrain::generation::*;
+use terrain::render::*;
 
 fn main() {
-	let height_map = HeightMap::with_edge_size(511);
+	let mut height_map = HeightMap::with_edge_size(511);
 	let slope_map = build_slope_map(&height_map);
 	calculate_mean_value(&slope_map);
     calculate_standard_deviation(&slope_map);
-	let h = HeightMap::from_buffer(&BUFFER).unwrap();
-    println!("{}", calculate_erosion_score(&h)); 
+
+	diamond_square(&mut height_map);
+
+	to_image(&height_map, "sucks.png").unwrap();
 }
