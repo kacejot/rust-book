@@ -12,7 +12,6 @@ pub enum Neighbourhood {
 impl HeightMap {
     pub fn with_edge_size(edge_size: usize) -> Self {
         let edge_size = edge_size.next_power_of_two();
-        println!("creating height map with egde size = {}", edge_size);
         HeightMap{
 			buffer: vec![0f32; edge_size * edge_size],
 			edge_size: edge_size
@@ -80,11 +79,11 @@ impl HeightMap {
 
         let gap = max - min;
         for height in &mut self.buffer {
-            *height = (max - *height) / gap;
+            *height = (*height - min) / gap;
         }
     }
 
-    pub fn to_byte(&self) -> Vec<u8> {
+    pub fn to_bytes(&self) -> Vec<u8> {
         let mut height_map = self.clone();
         height_map.normalize();
         height_map.buffer().iter()
